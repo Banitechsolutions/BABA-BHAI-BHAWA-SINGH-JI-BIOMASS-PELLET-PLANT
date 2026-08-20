@@ -1,9 +1,9 @@
 import streamlit as st
 from supabase import create_client, Client
 from fpdf import FPDF
-import base64
 import urllib.parse
 import datetime
+import os
 
 # --- DATABASE CONNECTION (HARDCODED) ---
 SUPABASE_URL = "https://vnkykcvkaglvtciaxzaa.supabase.co"
@@ -13,65 +13,115 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 # --- PDF GENERATOR (A4 LETTERHEAD) ---
 class PDF(FPDF):
     def header(self):
-        # Forest Green Header Block for Eco-Friendly Biomass Theme
+        # Professional Corporate Header Design
+        # Thin green accent bar at the very top
         self.set_fill_color(34, 139, 34) 
-        self.rect(0, 0, 210, 40, 'F')
+        self.rect(0, 0, 210, 6, 'F') 
+        
+        self.ln(10)
         
         # Firm Name
-        self.set_font('Arial', 'B', 16)
-        self.set_text_color(255, 255, 255)
+        self.set_font('Arial', 'B', 18)
+        self.set_text_color(34, 139, 34) # Dark Green Text
         self.cell(0, 10, 'BABA BHAI BHAWA SINGH JI BIOMASS PELLET PLANT', 0, 1, 'C')
         
         # Address & GSTIN
         self.set_font('Arial', '', 10)
-        self.cell(0, 6, 'Building No./Flat No.: 5, Kot Dharam Chand Kalan Road, Tarn Taran, Punjab, 143301', 0, 1, 'C')
+        self.set_text_color(80, 80, 80) # Dark Grey Text for professional look
+        self.cell(0, 5, 'Kot Dharam Chand Kalan Road, Tarn Taran, Punjab, 143301', 0, 1, 'C')
+        
         self.set_font('Arial', 'B', 10)
-        self.cell(0, 6, 'GSTIN: 03ABGFB5093F1ZO', 0, 1, 'C')
-        self.ln(10)
+        self.set_text_color(50, 50, 50)
+        self.cell(0, 5, 'GSTIN: 03ABGFB5093F1ZO', 0, 1, 'C')
+        
+        # Partner Details
+        self.set_font('Arial', '', 10)
+        self.set_text_color(80, 80, 80)
+        self.cell(0, 5, 'Partner: Chamkaur Singh  |  Mob: +91 98722 73941', 0, 1, 'C')
+        
+        # Elegant Horizontal Separator Line
+        self.set_draw_color(34, 139, 34)
+        self.set_line_width(0.5)
+        self.line(15, 43, 195, 43)
+        
+        self.ln(12) # Space between header and content
 
     def footer(self):
-        self.set_y(-15)
+        # Subtle footer line
+        self.set_draw_color(200, 200, 200)
+        self.set_line_width(0.2)
+        self.line(15, 275, 195, 275)
+        
+        # Check if Bani Tech Solutions logo exists and insert it
+        if os.path.exists("bani_logo.jpeg"):
+            self.image("bani_logo.jpeg", x=15, y=278, w=15)
+            
+        self.set_y(-20)
         self.set_font('Arial', 'I', 8)
+        self.set_text_color(150, 150, 150)
+        self.cell(0, 4, "Software designed by Bani Tech Solutions", 0, 1, 'C')
+        
         self.set_text_color(128, 128, 128)
-        self.cell(0, 10, f'Page {self.page_no()}', 0, 0, 'C')
+        self.cell(0, 4, f'Page {self.page_no()}', 0, 0, 'C')
 
-def create_quotation_pdf(client_name, date, qty, rate, transport, tax_type, total):
+def create_quotation_pdf(client_name, date, qty, rate, transport, tax_type, total, ref_no):
     pdf = PDF()
     pdf.add_page()
-    pdf.set_font("Arial", size=12)
+    pdf.set_font("Arial", size=11)
+    pdf.set_text_color(0, 0, 0)
     
-    # Body
-    pdf.cell(200, 10, txt=f"Date: {date}", ln=True, align='R')
-    pdf.cell(200, 10, txt=f"Quotation For: {client_name}", ln=True, align='L')
-    pdf.ln(10)
+    # Body Header (Reference No & Date)
+    pdf.cell(100, 8, txt=f"Ref No: {ref_no}", ln=0, align='L')
+    pdf.cell(90, 8, txt=f"Date: {date}", ln=1, align='R')
+    
+    pdf.set_font("Arial", 'B', 11)
+    pdf.cell(200, 8, txt=f"Quotation For: {client_name}", ln=True, align='L')
+    pdf.ln(6)
     
     # Table Header
-    pdf.set_fill_color(200, 220, 200)
+    pdf.set_font("Arial", 'B', 11)
+    pdf.set_fill_color(230, 240, 230) # Very light subtle green for table header
     pdf.cell(90, 10, 'Description', 1, 0, 'C', 1)
     pdf.cell(30, 10, 'Qty (MT)', 1, 0, 'C', 1)
     pdf.cell(35, 10, 'Rate (Rs)', 1, 0, 'C', 1)
     pdf.cell(35, 10, 'Amount (Rs)', 1, 1, 'C', 1)
     
     # Table Data
+    pdf.set_font("Arial", '', 11)
     base_amount = qty * rate
     pdf.cell(90, 10, 'Eco-Friendly Biomass Pellets', 1, 0, 'L')
-    pdf.cell(30, 10, str(qty), 1, 0, 'C')
-    pdf.cell(35, 10, str(rate), 1, 0, 'C')
-    pdf.cell(35, 10, str(base_amount), 1, 1, 'R')
+    pdf.cell(30, 10, f"{qty:,.2f}", 1, 0, 'C')
+    pdf.cell(35, 10, f"{rate:,.2f}", 1, 0, 'C')
+    pdf.cell(35, 10, f"{base_amount:,.2f}", 1, 1, 'R')
     
     pdf.cell(155, 10, 'Transportation Cost', 1, 0, 'R')
-    pdf.cell(35, 10, str(transport), 1, 1, 'R')
+    pdf.cell(35, 10, f"{transport:,.2f}", 1, 1, 'R')
     
     tax_amount = (base_amount + transport) * 0.05 # Assuming 5% GST for pellets
     pdf.cell(155, 10, f'GST ({tax_type} - 5%)', 1, 0, 'R')
-    pdf.cell(35, 10, str(tax_amount), 1, 1, 'R')
+    pdf.cell(35, 10, f"{tax_amount:,.2f}", 1, 1, 'R')
     
     pdf.set_font("Arial", 'B', 12)
+    pdf.set_fill_color(230, 240, 230)
     pdf.cell(155, 10, 'TOTAL AMOUNT', 1, 0, 'R', 1)
-    pdf.cell(35, 10, str(total), 1, 1, 'R', 1)
+    pdf.cell(35, 10, f"{total:,.2f}", 1, 1, 'R', 1)
     
-    pdf.ln(20)
-    pdf.cell(200, 10, txt="Authorized Signatory", ln=True, align='R')
+    pdf.ln(15)
+    
+    # Terms & Conditions
+    pdf.set_font("Arial", 'I', 9)
+    pdf.set_text_color(100, 100, 100)
+    pdf.cell(0, 5, txt="* Terms and conditions apply.", ln=True, align='L')
+    
+    pdf.ln(10)
+    
+    # Signatory
+    pdf.set_font("Arial", 'B', 11)
+    pdf.set_text_color(0, 0, 0)
+    pdf.cell(190, 10, txt="Authorized Signatory", ln=True, align='R')
+    pdf.set_font("Arial", '', 10)
+    pdf.set_text_color(80, 80, 80)
+    pdf.cell(190, 5, txt="For Baba Bhai Bhawa Singh Ji Biomass Pellet Plant", ln=True, align='R')
     
     return pdf.output(dest='S').encode('latin1')
 
@@ -128,7 +178,7 @@ else:
             total = base + tax
             
             # Save to Supabase
-            data, count = supabase.table("quotations").insert({
+            response = supabase.table("quotations").insert({
                 "client_name": client_name,
                 "client_mobile": client_mobile,
                 "quantity_mt": qty,
@@ -141,20 +191,29 @@ else:
             
             st.success("Quotation Saved Successfully!")
             
+            # Generate Unique Reference Number using the new Database ID
+            new_record = response.data[0]
+            ref_no = f"BBSP-{new_record['id'][:6].upper()}"
+            
             # Generate PDF
-            pdf_bytes = create_quotation_pdf(client_name, datetime.date.today(), qty, rate, transport, tax_type, total)
+            pdf_bytes = create_quotation_pdf(
+                client_name, 
+                datetime.date.today().strftime("%d-%b-%Y"), 
+                qty, rate, transport, tax_type, total, 
+                ref_no
+            )
             
             # Provide Print/Download Button
             st.download_button(
                 label="📄 Download / Print A4 Quotation",
                 data=pdf_bytes,
-                file_name=f"Quotation_{client_name}.pdf",
+                file_name=f"{ref_no}_{client_name}.pdf",
                 mime="application/pdf"
             )
             
             # Provide WhatsApp Link
             if client_mobile:
-                msg = urllib.parse.quote(f"Hello {client_name}, your quotation for {qty}MT of Biomass Pellets is Rs. {total}. Please find the document attached.")
+                msg = urllib.parse.quote(f"Hello {client_name}, your quotation ({ref_no}) for {qty}MT of Biomass Pellets is Rs. {total:,.2f}. Please find the document attached.")
                 wa_link = f"https://wa.me/{client_mobile}?text={msg}"
                 st.markdown(f"[📱 Send WhatsApp Message to Client]({wa_link})")
 
@@ -166,7 +225,11 @@ else:
         records = response.data
         
         for record in records:
-            with st.expander(f"{record['created_at'][:10]} - {record['client_name']} - Rs.{record['total_amount']}"):
+            # Safely format date and generate dynamic Reference Number
+            record_date = record['created_at'][:10] if record.get('created_at') else "Unknown Date"
+            ref_no = f"BBSP-{record['id'][:6].upper()}"
+            
+            with st.expander(f"{record_date} | {ref_no} | {record['client_name']} - Rs.{record['total_amount']:,.2f}"):
                 st.write(f"**Quantity:** {record['quantity_mt']} MT | **Rate:** Rs.{record['rate_per_mt']}/MT")
                 st.write(f"**Issued By:** {record['issued_by']}")
                 
@@ -175,17 +238,18 @@ else:
                 # Reprint Option
                 pdf_bytes = create_quotation_pdf(
                     record['client_name'], 
-                    record['created_at'][:10], 
+                    record_date, 
                     record['quantity_mt'], 
                     record['rate_per_mt'], 
                     record['transportation_cost'], 
                     record['tax_type'], 
-                    record['total_amount']
+                    record['total_amount'],
+                    ref_no
                 )
                 col_a.download_button(
                     label="📄 Reprint PDF",
                     data=pdf_bytes,
-                    file_name=f"Quotation_{record['client_name']}_Reprint.pdf",
+                    file_name=f"{ref_no}_{record['client_name']}_Reprint.pdf",
                     mime="application/pdf",
                     key=f"dl_{record['id']}"
                 )
