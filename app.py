@@ -120,42 +120,43 @@ else:
             
             submit = st.form_submit_button("Generate Quotation")
             
-            if submit:
-                # Calculations (Assuming 5% GST on Biomass Pellets)
-                base = (qty * rate) + transport
-                tax = base * 0.05
-                total = base + tax
-                
-                # Save to Supabase
-                data, count = supabase.table("quotations").insert({
-                    "client_name": client_name,
-                    "client_mobile": client_mobile,
-                    "quantity_mt": qty,
-                    "rate_per_mt": rate,
-                    "transportation_cost": transport,
-                    "tax_type": tax_type,
-                    "total_amount": total,
-                    "issued_by": st.session_state['user_role']
-                }).execute()
-                
-                st.success("Quotation Saved Successfully!")
-                
-                # Generate PDF
-                pdf_bytes = create_quotation_pdf(client_name, datetime.date.today(), qty, rate, transport, tax_type, total)
-                
-                # Provide Print/Download Button
-                st.download_button(
-                    label="📄 Download / Print A4 Quotation",
-                    data=pdf_bytes,
-                    file_name=f"Quotation_{client_name}.pdf",
-                    mime="application/pdf"
-                )
-                
-                # Provide WhatsApp Link
-                if client_mobile:
-                    msg = urllib.parse.quote(f"Hello {client_name}, your quotation for {qty}MT of Biomass Pellets is Rs. {total}. Please find the document attached.")
-                    wa_link = f"https://wa.me/{client_mobile}?text={msg}"
-                    st.markdown(f"[📱 Send WhatsApp Message to Client]({wa_link})")
+        # --- CRITICAL FIX: The block below is now OUTSIDE the 'with st.form' block ---
+        if submit:
+            # Calculations (Assuming 5% GST on Biomass Pellets)
+            base = (qty * rate) + transport
+            tax = base * 0.05
+            total = base + tax
+            
+            # Save to Supabase
+            data, count = supabase.table("quotations").insert({
+                "client_name": client_name,
+                "client_mobile": client_mobile,
+                "quantity_mt": qty,
+                "rate_per_mt": rate,
+                "transportation_cost": transport,
+                "tax_type": tax_type,
+                "total_amount": total,
+                "issued_by": st.session_state['user_role']
+            }).execute()
+            
+            st.success("Quotation Saved Successfully!")
+            
+            # Generate PDF
+            pdf_bytes = create_quotation_pdf(client_name, datetime.date.today(), qty, rate, transport, tax_type, total)
+            
+            # Provide Print/Download Button
+            st.download_button(
+                label="📄 Download / Print A4 Quotation",
+                data=pdf_bytes,
+                file_name=f"Quotation_{client_name}.pdf",
+                mime="application/pdf"
+            )
+            
+            # Provide WhatsApp Link
+            if client_mobile:
+                msg = urllib.parse.quote(f"Hello {client_name}, your quotation for {qty}MT of Biomass Pellets is Rs. {total}. Please find the document attached.")
+                wa_link = f"https://wa.me/{client_mobile}?text={msg}"
+                st.markdown(f"[📱 Send WhatsApp Message to Client]({wa_link})")
 
     elif menu == "Quotation Records":
         st.title("Quotation History")
