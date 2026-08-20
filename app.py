@@ -173,12 +173,21 @@ def display_top_header():
     st.markdown("<div style='background-color: #ff9a44; height: 3px; width: 100%; margin-bottom: 30px;'></div>", unsafe_allow_html=True)
 
 def display_sidebar_branding():
-    # Small, Left-Aligned Logo at the bottom of the sidebar
+    # Properly Sized, Left-Aligned Logo at the bottom of the sidebar
     st.sidebar.markdown("<br><br><br><br>", unsafe_allow_html=True)
     st.sidebar.markdown("---")
-    st.sidebar.markdown("<p style='text-align: left; color: gray; font-size: 12px; margin-bottom: 5px;'>Software designed by:</p>", unsafe_allow_html=True)
+    st.sidebar.markdown("<p style='text-align: left; color: gray; font-size: 13px; margin-bottom: 5px;'>Software designed by:</p>", unsafe_allow_html=True)
     if os.path.exists("bani_logo.jpeg"):
-        st.sidebar.image("bani_logo.jpeg", width=100) 
+        st.sidebar.image("bani_logo.jpeg", width=160) 
+
+def display_login_branding():
+    # Centered, Prominent Logo for the Login Page
+    st.markdown("<br><br><br>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: gray; font-size: 14px; margin-bottom: 10px;'>Software designed by:</p>", unsafe_allow_html=True)
+    if os.path.exists("bani_logo.jpeg"):
+        col1, col2, col3 = st.columns([1.5, 1, 1.5])
+        with col2:
+            st.image("bani_logo.jpeg", use_container_width=True)
 
 
 # --- TOP FIRM HEADER (ALWAYS VISIBLE) ---
@@ -190,7 +199,7 @@ if 'user_role' not in st.session_state:
 
 if st.session_state['user_role'] is None:
     st.title("System Login")
-    # Added unique keys here to prevent Duplicate Element ID errors!
+    # Unique keys to prevent Duplicate Element ID errors
     role = st.selectbox("Select Role", ["Staff", "Admin"], key="login_role_select")
     password = st.text_input("Password", type="password", key="login_password_input")
     
@@ -203,6 +212,9 @@ if st.session_state['user_role'] is None:
             st.rerun()
         else:
             st.error("Invalid Password")
+            
+    # Add Logo Branding back to Login screen
+    display_login_branding()
 
 else:
     # --- MAIN APPLICATION DASHBOARD ---
