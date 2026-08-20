@@ -5,11 +5,9 @@ import base64
 import urllib.parse
 import datetime
 
-# --- DATABASE CONNECTION ---
-# Configure these in Streamlit Cloud -> Advanced Settings -> Secrets
-# st.secrets["SUPABASE_URL"] and st.secrets["SUPABASE_KEY"]
-SUPABASE_URL = st.secrets.get("SUPABASE_URL", "your-supabase-url")
-SUPABASE_KEY = st.secrets.get("SUPABASE_KEY", "your-supabase-key")
+# --- DATABASE CONNECTION (HARDCODED) ---
+SUPABASE_URL = "https://vnkykcvkaglvtciaxzaa.supabase.co"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZua3lrY3ZrYWdsdnRjaWF4emFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyMzUyNTEsImV4cCI6MjEwMjgxMTI1MX0.1_0R39KMFJiZ7ouErrWnpHqXKhUxLO--uFe6TgMnEWI"
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # --- PDF GENERATOR (A4 LETTERHEAD) ---
