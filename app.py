@@ -18,7 +18,7 @@ def get_base64_image(image_path):
     return ""
 
 # --- ADVANCED HTML/CSS QUOTATION GENERATOR ---
-def create_html_quotation(client_name, date, qty, rate, transport, tax_type, total, ref_no):
+def create_html_quotation(client_name, client_mobile, client_address, date, qty, rate, transport, tax_type, total, ref_no):
     base_amount = qty * rate
     tax_amount = (base_amount + transport) * 0.05
     
@@ -35,28 +35,31 @@ def create_html_quotation(client_name, date, qty, rate, transport, tax_type, tot
             body {{ font-family: 'Arial', sans-serif; background-color: #f4f6f4; margin: 0; padding: 20px; }}
             .container {{ max-width: 800px; margin: auto; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow: hidden; }}
             
-            /* Colorful Classical Header */
-            .header {{ background: linear-gradient(135deg, #0f3d21, #1a5c34); color: white; padding: 30px 40px; text-align: center; border-bottom: 6px solid #d4af37; }}
-            .header h1 {{ margin: 0; font-family: 'Times New Roman', serif; font-size: 28px; letter-spacing: 1px; }}
-            .header p {{ margin: 5px 0; font-size: 13px; color: #e8f5e9; }}
-            .header .partner-info {{ margin-top: 15px; font-weight: bold; color: #f9e29c; font-size: 14px; }}
+            /* Colorful Corporate Header (Navy Blue & Gold) */
+            .header {{ background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 30px 40px; text-align: center; border-bottom: 6px solid #ff9a44; }}
+            .header h1 {{ margin: 0; font-family: 'Times New Roman', serif; font-size: 24px; letter-spacing: 0.5px; white-space: nowrap; }}
+            .header p {{ margin: 5px 0; font-size: 13px; color: #e0e6ed; }}
+            .header .partner-info {{ margin-top: 15px; font-weight: bold; color: #ffdc73; font-size: 14px; }}
             
             /* Body Details */
-            .details-section {{ padding: 30px 40px 10px; display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #f0f0f0; }}
-            .client-box {{ background: #f8faf8; padding: 15px; border-left: 4px solid #1a5c34; width: 45%; border-radius: 0 4px 4px 0; }}
+            .details-section {{ padding: 30px 40px 10px; display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #f0f0f0; }}
+            .client-box {{ background: #f4f7fb; padding: 15px; border-left: 4px solid #1e3c72; width: 50%; border-radius: 0 4px 4px 0; }}
             .client-box h3 {{ margin: 0 0 5px 0; color: #333; font-size: 16px; }}
+            .client-box text {{ display: block; font-size: 13px; color: #555; margin-top: 3px; }}
+            
+            .meta-info {{ text-align: right; }}
             .meta-info text {{ display: block; margin-bottom: 5px; font-size: 14px; color: #555; }}
             .meta-info strong {{ color: #222; }}
             
             /* Advanced Table */
             .table-container {{ padding: 20px 40px; }}
             table {{ width: 100%; border-collapse: collapse; margin-top: 10px; }}
-            th {{ background-color: #1a5c34; color: white; padding: 12px; text-align: left; font-size: 14px; border: 1px solid #144728; }}
+            th {{ background-color: #1e3c72; color: white; padding: 12px; text-align: left; font-size: 14px; border: 1px solid #152b52; }}
             td {{ padding: 12px; border: 1px solid #ddd; font-size: 14px; color: #444; }}
             .text-right {{ text-align: right; }}
             .text-center {{ text-align: center; }}
-            .row-even {{ background-color: #fbfcfb; }}
-            .total-row td {{ font-weight: bold; font-size: 15px; background-color: #eaf2eb; color: #1a5c34; border-top: 2px solid #1a5c34; }}
+            .row-even {{ background-color: #f9fbfd; }}
+            .total-row td {{ font-weight: bold; font-size: 15px; background-color: #eef2f7; color: #1e3c72; border-top: 2px solid #1e3c72; }}
             
             /* Footer & Signatory */
             .bottom-section {{ padding: 20px 40px 40px; display: flex; justify-content: space-between; align-items: flex-end; }}
@@ -69,8 +72,8 @@ def create_html_quotation(client_name, date, qty, rate, transport, tax_type, tot
             .dev-branding {{ background: #222; color: #aaa; text-align: right; padding: 10px 40px; font-size: 12px; display: flex; justify-content: flex-end; align-items: center; }}
             
             /* Interactive Print Button */
-            .print-btn {{ display: block; width: 200px; margin: 0 auto 20px; padding: 12px; background: #d4af37; color: #fff; text-align: center; font-weight: bold; border-radius: 5px; cursor: pointer; border: none; font-size: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }}
-            .print-btn:hover {{ background: #c29d2f; }}
+            .print-btn {{ display: block; width: 200px; margin: 0 auto 20px; padding: 12px; background: #ff9a44; color: #fff; text-align: center; font-weight: bold; border-radius: 5px; cursor: pointer; border: none; font-size: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }}
+            .print-btn:hover {{ background: #e88633; }}
             
             /* Hide Button When Printing */
             @media print {{
@@ -96,6 +99,8 @@ def create_html_quotation(client_name, date, qty, rate, transport, tax_type, tot
                 <div class="client-box">
                     <h3>Quotation For:</h3>
                     <strong>{client_name}</strong>
+                    <text><strong>Mobile:</strong> {client_mobile}</text>
+                    <text><strong>Address:</strong><br>{client_address}</text>
                 </div>
                 <div class="meta-info">
                     <text><strong>Ref No:</strong> {ref_no}</text>
@@ -158,15 +163,17 @@ def create_html_quotation(client_name, date, qty, rate, transport, tax_type, tot
     return html_content.encode('utf-8')
 
 
-# --- UI LOGO HELPER FUNCS ---
+# --- UI BRANDING HELPER FUNCS ---
 def display_ui_branding():
-    st.markdown("<p style='text-align: center; color: gray; font-size: 13px; margin-bottom: 5px;'>Software designed by</p>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #1e3c72; font-family: serif;'>Baba Bhai Bhawa Singh Ji Biomass Pellet Plant</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: gray; font-size: 13px; margin-bottom: 5px; margin-top: 30px;'>Software designed by</p>", unsafe_allow_html=True)
     if os.path.exists("bani_logo.jpeg"):
         cols = st.columns([1, 2, 1])
         with cols[1]:
             st.image("bani_logo.jpeg", use_container_width=True)
 
 def display_sidebar_branding():
+    st.sidebar.markdown("<h3 style='text-align: center; color: #1e3c72; font-family: serif;'>Baba Bhai Bhawa Singh Ji<br>Biomass Pellet Plant</h3>", unsafe_allow_html=True)
     st.sidebar.markdown("---")
     st.sidebar.markdown("<p style='text-align: center; color: gray; font-size: 13px; margin-bottom: 5px;'>Software designed by</p>", unsafe_allow_html=True)
     if os.path.exists("bani_logo.jpeg"):
@@ -178,6 +185,9 @@ if 'user_role' not in st.session_state:
     st.session_state['user_role'] = None
 
 if st.session_state['user_role'] is None:
+    # Firm Name on Login Page
+    st.markdown("<br>", unsafe_allow_html=True)
+    
     st.title("Login")
     role = st.selectbox("Select Role", ["Staff", "Admin"])
     password = st.text_input("Password", type="password")
@@ -198,6 +208,10 @@ if st.session_state['user_role'] is None:
 
 else:
     # --- MAIN APPLICATION DASHBOARD ---
+    # Firm Name on Sidebar
+    display_sidebar_branding()
+    st.sidebar.markdown("---")
+    
     st.sidebar.title(f"Welcome, {st.session_state['user_role']}")
     menu = st.sidebar.radio("Navigation", ["Issue Quotation", "Quotation Records"])
     
@@ -205,8 +219,6 @@ else:
         st.session_state['user_role'] = None
         st.rerun()
         
-    # Working Page Sidebar Branding
-    display_sidebar_branding()
 
     if menu == "Issue Quotation":
         st.title("Issue New Quotation")
@@ -215,6 +227,9 @@ else:
             col1, col2 = st.columns(2)
             client_name = col1.text_input("Client/Company Name")
             client_mobile = col2.text_input("Client WhatsApp Number (e.g., 919876543210)")
+            
+            # Added Client Address Field
+            client_address = st.text_area("Client Full Address")
             
             col3, col4 = st.columns(2)
             qty = col3.number_input("Quantity (MT)", min_value=1.0, value=10.0)
@@ -230,9 +245,11 @@ else:
             tax = base * 0.05
             total = base + tax
             
+            # Save to Supabase (Now includes client_address)
             response = supabase.table("quotations").insert({
                 "client_name": client_name,
                 "client_mobile": client_mobile,
+                "client_address": client_address,
                 "quantity_mt": qty,
                 "rate_per_mt": rate,
                 "transportation_cost": transport,
@@ -246,9 +263,9 @@ else:
             new_record = response.data[0]
             ref_no = f"BBSP-{new_record['id'][:6].upper()}"
             
-            # GENERATE HTML INSTEAD OF PDF
+            # GENERATE HTML
             html_bytes = create_html_quotation(
-                client_name, 
+                client_name, client_mobile, client_address,
                 datetime.date.today().strftime("%d-%b-%Y"), 
                 qty, rate, transport, tax_type, total, 
                 ref_no
@@ -259,18 +276,17 @@ else:
                 msg = urllib.parse.quote(f"Hello {client_name}, your quotation ({ref_no}) for {qty}MT of Biomass Pellets is Rs. {total:,.2f}. Please find the document attached.")
                 wa_link = f"https://wa.me/{client_mobile}?text={msg}"
             
-            # Save variables into session state so they survive the "Print" rerun
+            # Save variables into session state
             st.session_state['last_file'] = html_bytes
             st.session_state['last_filename'] = f"{ref_no}_{client_name}.html"
             st.session_state['last_wa'] = wa_link
             st.session_state['last_client'] = client_name
 
-        # Render action buttons outside the form submit logic using Memory (Session State)
+        # Render action buttons
         if 'last_file' in st.session_state:
             st.markdown("---")
             st.write(f"**Actions for latest quotation: {st.session_state['last_client']}**")
             
-            # Changed to HTML Download
             st.download_button(
                 label="🌐 Download High-Quality HTML Quotation",
                 data=st.session_state['last_file'],
@@ -297,8 +313,14 @@ else:
                 
                 col_a, col_b = st.columns(2)
                 
+                # Fetch address safely in case older records don't have it
+                historical_address = record.get('client_address', '')
+                historical_mobile = record.get('client_mobile', '')
+                
                 html_bytes = create_html_quotation(
                     record['client_name'], 
+                    historical_mobile,
+                    historical_address,
                     record_date, 
                     record['quantity_mt'], 
                     record['rate_per_mt'], 
