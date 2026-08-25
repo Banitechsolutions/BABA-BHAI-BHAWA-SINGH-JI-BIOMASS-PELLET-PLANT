@@ -144,8 +144,8 @@ def create_html_quotation(client_name, client_mobile, client_address, date, qty,
     return html_content.encode('utf-8')
 
 
-# --- ADVANCED HTML/CSS PURCHASE ORDER GENERATOR ---
-def create_html_purchase_order(supplier_name, supplier_gst, supplier_address, date, qty, rate, transport, tax_type, total, po_ref_no):
+# --- ADVANCED HTML/CSS PURCHASE ORDER GENERATOR (Matched to Quotation Style) ---
+def create_html_purchase_order(supplier_name, supplier_mobile, supplier_gst, supplier_address, date, qty, rate, transport, tax_type, total, po_ref_no):
     base_amount = qty * rate
     tax_amount = (base_amount + transport) * 0.05
     
@@ -162,8 +162,9 @@ def create_html_purchase_order(supplier_name, supplier_gst, supplier_address, da
             body {{ font-family: 'Arial', sans-serif; background-color: #f4f6f4; margin: 0; padding: 20px; }}
             .container {{ max-width: 800px; margin: auto; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow: hidden; }}
             .header {{ background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 30px 40px; text-align: center; border-bottom: 6px solid #ff9a44; }}
-            .header h1 {{ margin: 0; font-family: 'Times New Roman', serif; font-size: 24px; letter-spacing: 0.5px; }}
+            .header h1 {{ margin: 0; font-family: 'Times New Roman', serif; font-size: 24px; letter-spacing: 0.5px; white-space: nowrap; }}
             .header p {{ margin: 5px 0; font-size: 13px; color: #e0e6ed; }}
+            .header .partner-info {{ margin-top: 15px; font-weight: bold; color: #ffdc73; font-size: 14px; }}
             .details-section {{ padding: 30px 40px 10px; display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #f0f0f0; }}
             .supplier-box {{ background: #f4f7fb; padding: 15px; border-left: 4px solid #1e3c72; width: 50%; border-radius: 0 4px 4px 0; }}
             .supplier-box h3 {{ margin: 0 0 5px 0; color: #333; font-size: 16px; }}
@@ -181,10 +182,17 @@ def create_html_purchase_order(supplier_name, supplier_gst, supplier_address, da
             .bottom-section {{ padding: 20px 40px 40px; display: flex; justify-content: space-between; align-items: flex-end; }}
             .terms {{ font-size: 12px; color: #777; font-style: italic; max-width: 50%; }}
             .signatory {{ text-align: right; }}
+            .signatory p {{ margin: 0; font-size: 14px; color: #555; }}
             .signatory h4 {{ margin: 0 0 40px 0; font-size: 16px; color: #333; }}
             .dev-branding {{ background: #222; color: #aaa; text-align: right; padding: 10px 40px; font-size: 12px; display: flex; justify-content: flex-end; align-items: center; }}
-            .print-btn {{ display: block; width: 200px; margin: 0 auto 20px; padding: 12px; background: #ff9a44; color: #fff; text-align: center; font-weight: bold; border-radius: 5px; cursor: pointer; border: none; font-size: 16px; }}
-            @media print {{ .print-btn {{ display: none; }} }}
+            .print-btn {{ display: block; width: 200px; margin: 0 auto 20px; padding: 12px; background: #ff9a44; color: #fff; text-align: center; font-weight: bold; border-radius: 5px; cursor: pointer; border: none; font-size: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }}
+            .print-btn:hover {{ background: #e88633; }}
+            @media print {{
+                body {{ background-color: white; padding: 0; }}
+                .container {{ box-shadow: none; border: none; max-width: 100%; }}
+                .print-btn {{ display: none; }}
+                .header, th, .total-row td, .dev-branding {{ -webkit-print-color-adjust: exact; print-color-adjust: exact; }}
+            }}
         </style>
     </head>
     <body>
@@ -193,11 +201,13 @@ def create_html_purchase_order(supplier_name, supplier_gst, supplier_address, da
             <div class="header">
                 <h1>PURCHASE ORDER</h1>
                 <p>Baba Bhai Bhawa Singh Ji Biomass Pellet Plant | GSTIN: 03ABGFB5093F1ZO</p>
+                <div class="partner-info">Kot Dharam Chand Kalan Road, Tarn Taran, Punjab, 143301</div>
             </div>
             <div class="details-section">
                 <div class="supplier-box">
                     <h3>Vendor / Supplier Details:</h3>
                     <strong>{supplier_name}</strong>
+                    <text><strong>Mobile:</strong> {supplier_mobile}</text>
                     <text><strong>GSTIN:</strong> {supplier_gst}</text>
                     <text><strong>Address:</strong><br>{supplier_address}</text>
                 </div>
@@ -245,7 +255,8 @@ def create_html_purchase_order(supplier_name, supplier_gst, supplier_address, da
                 </div>
                 <div class="signatory">
                     <h4>Authorized Signatory</h4>
-                    <p>Baba Bhai Bhawa Singh Ji Biomass</p>
+                    <p>For Baba Bhai Bhawa Singh Ji</p>
+                    <p>Biomass Pellet Plant</p>
                 </div>
             </div>
             <div class="dev-branding">
@@ -424,7 +435,6 @@ else:
             tax = base * 0.05
             total = base + tax
             
-            # Save PO to Supabase table 'purchase_orders'
             po_res = supabase.table("purchase_orders").insert({
                 "supplier_name": selected_party_name,
                 "supplier_gst": fetched_gst,
@@ -444,7 +454,7 @@ else:
             po_ref_no = f"BBSP-PO-{po_new_record['id'][:6].upper()}"
             
             html_po_bytes = create_html_purchase_order(
-                selected_party_name, fetched_gst, fetched_address,
+                selected_party_name, fetched_mobile, fetched_gst, fetched_address,
                 datetime.date.today().strftime("%d-%b-%Y"),
                 po_qty, po_rate, po_transport, po_tax_type, total, po_ref_no
             )
@@ -540,6 +550,7 @@ else:
                     
                     po_html_bytes = create_html_purchase_order(
                         record['supplier_name'],
+                        record.get('supplier_mobile', ''),
                         record.get('supplier_gst', ''),
                         record.get('supplier_address', ''),
                         record_date,
