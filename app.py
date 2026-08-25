@@ -37,24 +37,16 @@ def create_html_quotation(client_name, client_mobile, client_address, date, qty,
         <style>
             body {{ font-family: 'Arial', sans-serif; background-color: #f4f6f4; margin: 0; padding: 20px; }}
             .container {{ max-width: 800px; margin: auto; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow: hidden; }}
-            
-            /* Colorful Corporate Header (Navy Blue & Gold) */
             .header {{ background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 30px 40px; text-align: center; border-bottom: 6px solid #ff9a44; }}
             .header h1 {{ margin: 0; font-family: 'Times New Roman', serif; font-size: 24px; letter-spacing: 0.5px; white-space: nowrap; }}
             .header p {{ margin: 5px 0; font-size: 13px; color: #e0e6ed; }}
             .header .partner-info {{ margin-top: 15px; font-weight: bold; color: #ffdc73; font-size: 14px; }}
-            
-            /* Body Details */
             .details-section {{ padding: 30px 40px 10px; display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #f0f0f0; }}
             .client-box {{ background: #f4f7fb; padding: 15px; border-left: 4px solid #1e3c72; width: 50%; border-radius: 0 4px 4px 0; }}
             .client-box h3 {{ margin: 0 0 5px 0; color: #333; font-size: 16px; }}
             .client-box text {{ display: block; font-size: 13px; color: #555; margin-top: 3px; }}
-            
             .meta-info {{ text-align: right; }}
             .meta-info text {{ display: block; margin-bottom: 5px; font-size: 14px; color: #555; }}
-            .meta-info strong {{ color: #222; }}
-            
-            /* Advanced Table */
             .table-container {{ padding: 20px 40px; }}
             table {{ width: 100%; border-collapse: collapse; margin-top: 10px; }}
             th {{ background-color: #1e3c72; color: white; padding: 12px; text-align: left; font-size: 14px; border: 1px solid #152b52; }}
@@ -63,21 +55,14 @@ def create_html_quotation(client_name, client_mobile, client_address, date, qty,
             .text-center {{ text-align: center; }}
             .row-even {{ background-color: #f9fbfd; }}
             .total-row td {{ font-weight: bold; font-size: 15px; background-color: #eef2f7; color: #1e3c72; border-top: 2px solid #1e3c72; }}
-            
-            /* Footer & Signatory */
             .bottom-section {{ padding: 20px 40px 40px; display: flex; justify-content: space-between; align-items: flex-end; }}
             .terms {{ font-size: 12px; color: #777; font-style: italic; max-width: 50%; }}
             .signatory {{ text-align: right; }}
             .signatory p {{ margin: 0; font-size: 14px; color: #555; }}
             .signatory h4 {{ margin: 0 0 40px 0; font-size: 16px; color: #333; }}
-            
-            /* Developer Branding */
             .dev-branding {{ background: #222; color: #aaa; text-align: right; padding: 10px 40px; font-size: 12px; display: flex; justify-content: flex-end; align-items: center; }}
-            
-            /* Interactive Print Button */
             .print-btn {{ display: block; width: 200px; margin: 0 auto 20px; padding: 12px; background: #ff9a44; color: #fff; text-align: center; font-weight: bold; border-radius: 5px; cursor: pointer; border: none; font-size: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }}
             .print-btn:hover {{ background: #e88633; }}
-            
             @media print {{
                 body {{ background-color: white; padding: 0; }}
                 .container {{ box-shadow: none; border: none; max-width: 100%; }}
@@ -94,7 +79,6 @@ def create_html_quotation(client_name, client_mobile, client_address, date, qty,
                 <p>Kot Dharam Chand Kalan Road, Tarn Taran, Punjab, 143301 | GSTIN: 03ABGFB5093F1ZO</p>
                 <div class="partner-info">Partner: Chamkaur Singh &nbsp;|&nbsp; Mob: +91 98722 73941</div>
             </div>
-            
             <div class="details-section">
                 <div class="client-box">
                     <h3>Quotation For:</h3>
@@ -107,7 +91,6 @@ def create_html_quotation(client_name, client_mobile, client_address, date, qty,
                     <text><strong>Date:</strong> {date}</text>
                 </div>
             </div>
-            
             <div class="table-container">
                 <table>
                     <thead>
@@ -140,7 +123,6 @@ def create_html_quotation(client_name, client_mobile, client_address, date, qty,
                     </tbody>
                 </table>
             </div>
-            
             <div class="bottom-section">
                 <div class="terms">
                     * Terms and conditions apply.<br>
@@ -152,7 +134,6 @@ def create_html_quotation(client_name, client_mobile, client_address, date, qty,
                     <p>Biomass Pellet Plant</p>
                 </div>
             </div>
-            
             <div class="dev-branding">
                 Software designed by Bani Tech Solutions {logo_html}
             </div>
@@ -298,7 +279,7 @@ def display_login_branding():
             st.image("bani_logo.jpeg", use_container_width=True)
 
 
-# --- TOP FIRM HEADER (ALWAYS VISIBLE) ---
+# --- TOP FIRM HEADER ---
 display_top_header()
 
 # --- AUTHENTICATION ---
@@ -325,7 +306,7 @@ if st.session_state['user_role'] is None:
 else:
     # --- MAIN APPLICATION DASHBOARD ---
     st.sidebar.title(f"Welcome, {st.session_state['user_role']}")
-    menu = st.sidebar.radio("Navigation", ["Issue Quotation", "Issue Purchase Order", "Quotation Records"])
+    menu = st.sidebar.radio("Navigation", ["Issue Quotation", "Issue Purchase Order", "Quotation Records", "Purchase Order Records"])
     
     if st.sidebar.button("Logout"):
         st.session_state['user_role'] = None
@@ -396,7 +377,7 @@ else:
             st.write(f"**Actions for latest quotation: {st.session_state['last_client']}**")
             
             st.download_button(
-                label="🌐 Download High-Quality HTML Quotation",
+                label="🌐 Download / Print HTML Quotation",
                 data=st.session_state['last_file'],
                 file_name=st.session_state['last_filename'],
                 mime="text/html"
@@ -408,7 +389,6 @@ else:
     elif menu == "Issue Purchase Order":
         st.title("Generate Purchase Order (PO)")
         
-        # Fetch parties from Supabase safely
         try:
             parties_res = supabase.table("parties").select("*").execute()
             parties = parties_res.data if parties_res.data else []
@@ -422,9 +402,10 @@ else:
             selected_party = next((p for p in parties if p.get('name') == selected_party_name), {})
             fetched_gst = selected_party.get('gst_no', 'N/A')
             fetched_address = selected_party.get('address', 'N/A')
+            fetched_mobile = selected_party.get('phone', '')
         else:
-            st.info("No saved parties found in 'parties' table. Enter details below:")
             selected_party_name = st.text_input("Vendor / Party Name")
+            fetched_mobile = st.text_input("Vendor WhatsApp Number (e.g., 919876543210)")
             fetched_gst = st.text_input("GSTIN Number")
             fetched_address = st.text_area("Full Address")
             
@@ -443,7 +424,24 @@ else:
             tax = base * 0.05
             total = base + tax
             
-            po_ref_no = f"BBSP-PO-{datetime.datetime.now().strftime('%m%d%H%M')}"
+            # Save PO to Supabase table 'purchase_orders'
+            po_res = supabase.table("purchase_orders").insert({
+                "supplier_name": selected_party_name,
+                "supplier_gst": fetched_gst,
+                "supplier_address": fetched_address,
+                "supplier_mobile": fetched_mobile,
+                "quantity_mt": po_qty,
+                "rate_per_mt": po_rate,
+                "transportation_cost": po_transport,
+                "tax_type": po_tax_type,
+                "total_amount": total,
+                "issued_by": st.session_state['user_role']
+            }).execute()
+            
+            st.success("Purchase Order Generated and Saved Successfully!")
+            
+            po_new_record = po_res.data[0]
+            po_ref_no = f"BBSP-PO-{po_new_record['id'][:6].upper()}"
             
             html_po_bytes = create_html_purchase_order(
                 selected_party_name, fetched_gst, fetched_address,
@@ -451,13 +449,29 @@ else:
                 po_qty, po_rate, po_transport, po_tax_type, total, po_ref_no
             )
             
-            st.success("Purchase Order Generated Successfully!")
+            wa_po_link = ""
+            if fetched_mobile:
+                msg_po = urllib.parse.quote(f"Hello {selected_party_name}, your Purchase Order ({po_ref_no}) for {po_qty}MT of Biomass Feedstock is Rs. {total:,.2f}. Please find the details attached.")
+                wa_po_link = f"https://wa.me/{fetched_mobile}?text={msg_po}"
+            
+            st.session_state['po_last_file'] = html_po_bytes
+            st.session_state['po_last_filename'] = f"{po_ref_no}_{selected_party_name}.html"
+            st.session_state['po_last_wa'] = wa_po_link
+            st.session_state['po_last_client'] = selected_party_name
+
+        if 'po_last_file' in st.session_state:
+            st.markdown("---")
+            st.write(f"**Actions for latest PO: {st.session_state['po_last_client']}**")
+            
             st.download_button(
-                label="🌐 Download High-Quality HTML Purchase Order",
-                data=html_po_bytes,
-                file_name=f"{po_ref_no}_{selected_party_name}.html",
+                label="🌐 Download / Print HTML Purchase Order",
+                data=st.session_state['po_last_file'],
+                file_name=st.session_state['po_last_filename'],
                 mime="text/html"
             )
+            
+            if st.session_state['po_last_wa']:
+                st.markdown(f"[📱 Send WhatsApp Message to Vendor]({st.session_state['po_last_wa']})")
 
     elif menu == "Quotation Records":
         st.title("Quotation History")
@@ -476,13 +490,10 @@ else:
                     
                     col_a, col_b = st.columns(2)
                     
-                    historical_address = record.get('client_address', '')
-                    historical_mobile = record.get('client_mobile', '')
-                    
                     html_bytes = create_html_quotation(
                         record['client_name'], 
-                        historical_mobile,
-                        historical_address,
+                        record.get('client_mobile', ''),
+                        record.get('client_address', ''),
                         record_date, 
                         record['quantity_mt'], 
                         record['rate_per_mt'], 
@@ -492,7 +503,7 @@ else:
                         ref_no
                     )
                     col_a.download_button(
-                        label="🌐 Reprint HTML",
+                        label="🌐 Reprint / Print HTML",
                         data=html_bytes,
                         file_name=f"{ref_no}_{record['client_name']}_Reprint.html",
                         mime="text/html",
@@ -506,3 +517,58 @@ else:
                             st.rerun()
         else:
             st.info("No quotation records found.")
+
+    elif menu == "Purchase Order Records":
+        st.title("Purchase Order History (Reprint & WhatsApp)")
+        
+        try:
+            po_response = supabase.table("purchase_orders").select("*").order("created_at", desc=True).execute()
+            po_records = po_response.data
+        except Exception:
+            po_records = []
+            
+        if po_records:
+            for record in po_records:
+                record_date = record['created_at'][:10] if record.get('created_at') else "Unknown Date"
+                po_ref_no = f"BBSP-PO-{record['id'][:6].upper()}"
+                
+                with st.expander(f"{record_date} | {po_ref_no} | {record['supplier_name']} - Rs.{record['total_amount']:,.2f}"):
+                    st.write(f"**Quantity:** {record['quantity_mt']} MT | **Rate:** Rs.{record['rate_per_mt']}/MT")
+                    st.write(f"**GSTIN:** {record.get('supplier_gst', 'N/A')} | **Issued By:** {record.get('issued_by', 'Staff')}")
+                    
+                    col_a, col_b = st.columns(2)
+                    
+                    po_html_bytes = create_html_purchase_order(
+                        record['supplier_name'],
+                        record.get('supplier_gst', ''),
+                        record.get('supplier_address', ''),
+                        record_date,
+                        record['quantity_mt'],
+                        record['rate_per_mt'],
+                        record['transportation_cost'],
+                        record['tax_type'],
+                        record['total_amount'],
+                        po_ref_no
+                    )
+                    
+                    col_a.download_button(
+                        label="🌐 Reprint / Print PO",
+                        data=po_html_bytes,
+                        file_name=f"{po_ref_no}_{record['supplier_name']}_Reprint.html",
+                        mime="text/html",
+                        key=f"po_dl_{record['id']}"
+                    )
+                    
+                    sup_mobile = record.get('supplier_mobile', '')
+                    if sup_mobile:
+                        hist_msg = urllib.parse.quote(f"Hello {record['supplier_name']}, regarding Purchase Order ({po_ref_no}) for {record['quantity_mt']}MT of Biomass Feedstock amounting to Rs. {record['total_amount']:,.2f}.")
+                        hist_wa_link = f"https://wa.me/{sup_mobile}?text={hist_msg}"
+                        st.markdown(f"[📱 Send WhatsApp Message to Vendor]({hist_wa_link})")
+                    
+                    if st.session_state['user_role'] == "Admin":
+                        if col_b.button("🗑️ Delete PO Record", key=f"po_del_{record['id']}"):
+                            supabase.table("purchase_orders").delete().eq("id", record['id']).execute()
+                            st.success("Record deleted. Please refresh the page.")
+                            st.rerun()
+        else:
+            st.info("No purchase order records found.")
