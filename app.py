@@ -144,7 +144,7 @@ def create_html_quotation(client_name, client_mobile, client_address, date, qty,
     return html_content.encode('utf-8')
 
 
-# --- ADVANCED HTML/CSS PURCHASE ORDER GENERATOR (Matched to Quotation Style) ---
+# --- ADVANCED HTML/CSS PURCHASE ORDER GENERATOR (Exact Quotation Letterhead Layout) ---
 def create_html_purchase_order(supplier_name, supplier_mobile, supplier_gst, supplier_address, date, qty, rate, transport, tax_type, total, po_ref_no):
     base_amount = qty * rate
     tax_amount = (base_amount + transport) * 0.05
@@ -165,7 +165,8 @@ def create_html_purchase_order(supplier_name, supplier_mobile, supplier_gst, sup
             .header h1 {{ margin: 0; font-family: 'Times New Roman', serif; font-size: 24px; letter-spacing: 0.5px; white-space: nowrap; }}
             .header p {{ margin: 5px 0; font-size: 13px; color: #e0e6ed; }}
             .header .partner-info {{ margin-top: 15px; font-weight: bold; color: #ffdc73; font-size: 14px; }}
-            .details-section {{ padding: 30px 40px 10px; display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #f0f0f0; }}
+            .doc-title-bar {{ background: #eef2f7; color: #1e3c72; padding: 12px 40px; font-weight: bold; font-size: 16px; border-bottom: 2px solid #1e3c72; display: flex; justify-content: space-between; align-items: center; }}
+            .details-section {{ padding: 20px 40px 10px; display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #f0f0f0; }}
             .supplier-box {{ background: #f4f7fb; padding: 15px; border-left: 4px solid #1e3c72; width: 50%; border-radius: 0 4px 4px 0; }}
             .supplier-box h3 {{ margin: 0 0 5px 0; color: #333; font-size: 16px; }}
             .supplier-box text {{ display: block; font-size: 13px; color: #555; margin-top: 3px; }}
@@ -191,7 +192,7 @@ def create_html_purchase_order(supplier_name, supplier_mobile, supplier_gst, sup
                 body {{ background-color: white; padding: 0; }}
                 .container {{ box-shadow: none; border: none; max-width: 100%; }}
                 .print-btn {{ display: none; }}
-                .header, th, .total-row td, .dev-branding {{ -webkit-print-color-adjust: exact; print-color-adjust: exact; }}
+                .header, .doc-title-bar, th, .total-row td, .dev-branding {{ -webkit-print-color-adjust: exact; print-color-adjust: exact; }}
             }}
         </style>
     </head>
@@ -199,9 +200,13 @@ def create_html_purchase_order(supplier_name, supplier_mobile, supplier_gst, sup
         <button class="print-btn" onclick="window.print()">🖨️ Print / Save PO as PDF</button>
         <div class="container">
             <div class="header">
-                <h1>PURCHASE ORDER</h1>
-                <p>Baba Bhai Bhawa Singh Ji Biomass Pellet Plant | GSTIN: 03ABGFB5093F1ZO</p>
-                <div class="partner-info">Kot Dharam Chand Kalan Road, Tarn Taran, Punjab, 143301</div>
+                <h1>BABA BHAI BHAWA SINGH JI BIOMASS PELLET PLANT</h1>
+                <p>Kot Dharam Chand Kalan Road, Tarn Taran, Punjab, 143301 | GSTIN: 03ABGFB5093F1ZO</p>
+                <div class="partner-info">Partner: Chamkaur Singh &nbsp;|&nbsp; Mob: +91 98722 73941</div>
+            </div>
+            <div class="doc-title-bar">
+                <span>PURCHASE ORDER</span>
+                <span style="font-size: 14px; font-weight: normal;">Reference: <strong>{po_ref_no}</strong></span>
             </div>
             <div class="details-section">
                 <div class="supplier-box">
